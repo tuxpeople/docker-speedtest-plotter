@@ -4,10 +4,12 @@
 FROM python:3-alpine
 
 # install necessary packages and fonts
+# hadolint ignore=DL3018
 RUN apk add --no-cache gnuplot ttf-droid
 
 # copy requirements file and install with pip
 COPY requirements.txt /requirements.txt
+# hadolint ignore=DL3018
 RUN apk add --no-cache --virtual build-deps musl-dev gcc postgresql-dev \
   && apk add --no-cache postgresql-libs \
   && pip install --no-cache-dir -r /requirements.txt \
