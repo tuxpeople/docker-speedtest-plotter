@@ -14,7 +14,7 @@ on:
 
 env:
   PLATFORMS: "linux/amd64,linux/arm/v7,linux/arm/v6,linux/arm64, linux/ppc64le"     # Build for which platforms
-  IMAGENAME: "quay.io/tdeutsch/speedtest-plotter"                    # Name of the image
+  IMAGENAME: "quay.io/tdeutsch/speedtest-plotter"                       # Name of the image
   DEFAULT_TAG: "latest"                                              # Which tag is beeing used if we are building for master/main branch 
   QUAY_USER: "tdeutsch"                                              # Which user to use to login to quay.io
   DOCKER_USER: "tdeutsch"                                            # Which user to use to login to DockerHub
@@ -61,11 +61,7 @@ jobs:
                TAGS="${{ env.IMAGENAME }}:${VERSION}"
             fi
           elif [[ $GITHUB_REF == refs/heads/* ]]; then
-            VERSION=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's#/+#-#g')
-            if [ "${{ github.event.repository.default_branch }}" = "$VERSION" ]; then
-              VERSION=${{ env.DEFAULT_TAG }}
-            fi
-            TAGS="${{ env.IMAGENAME }}:${VERSION}"
+            TAGS="${{ env.IMAGENAME }}:${{ env.DEFAULT_TAG }}"
           elif [[ $GITHUB_REF == refs/pull/* ]]; then
             TAGS="${{ env.IMAGENAME }}:pr-${{ github.event.number }}"
           fi
@@ -120,3 +116,12 @@ jobs:
               GHTAG=$(echo $i | sed "s/quay.io/docker.io/g" | sed "s/${{ env.QUAY_USER }}/${{ env.DOCKER_USER }}/g")
               skopeo copy --all --src-creds=${{ env.QUAY_USER }}:${{ secrets.REGISTRY_TOKEN }} --dest-creds=${{ env.DOCKER_USER }}:${{ secrets.DOCKERPASSWORD }} docker://${i} docker://${GHTAG}
           done
+          echo ::set-output name=shortname::$(echo ${{ env.IMAGENAME }} | sed "s/quay.io\///g")
+      -
+        name: Docker Hub Description
+        uses: peter-evans/dockerhub-description@v2
+        with:
+          username: ${{ env.DOCKER_USER }}
+          password: ${{ secrets.DOCKERPASSWORD }}
+          repository: ${{ steps.copy_images.outputs.shortname }}
+

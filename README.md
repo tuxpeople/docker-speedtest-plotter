@@ -1,4 +1,13 @@
 # speedtest-plotter
+![Github Workflow Badge](https://github.com/tuxpeople/docker-speedtest-plotter/actions/workflows/release.yml/badge.svg)
+![Github Last Commit Badge](https://img.shields.io/github/last-commit/tuxpeople/docker-speedtest-plotter)
+![Docker Pull Badge](https://img.shields.io/docker/pulls/tdeutsch/speedtest-plotter)
+![Docker Stars Badge](https://img.shields.io/docker/stars/tdeutsch/speedtest-plotter)
+![Docker Size Badge](https://img.shields.io/docker/image-size/tdeutsch/speedtest-plotter)
+
+## Quick reference
+
+Originally from Anton Semjonov, I made it multi-arch for me.
 
 This is a collection of scripts, which takes internet speedtest measurements
 with [speedtest-cli](https://github.com/sivel/speedtest-cli) and plot them
@@ -8,24 +17,26 @@ The results can optionally be displayed through a simple Flask webserver.
 
 ![example plot of speedtest results](example.png)
 
+* **Originally from:**
+  https://github.com/ansemjo/speedtest-plotter
+* **Code repository:**
+  https://github.com/tuxpeople/docker-speedtest-plotter
+* **Where to file issues:**
+  https://github.com/tuxpeople/docker-speedtest-plotter/issues
+* **Supported architectures:**
+  ```amd64```, ```armv7```, ```armv6```, ```ppc64le``` and ```arm64```
+
+## Image tags
+- ```latest``` always refers to the latest tagged release
+- There are tags for major, minor and dotreleases (eg. ```1.0.0```, ```1.0```, ```1``` )
+- ```edge``` gets automatically built on every push to master and also via a weekly cron job
+
 ## USAGE
 
 ### CONTAINER
-<a href="https://hub.docker.com/r/ansemjo/speedtest/builds">
-
-![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/ansemjo/speedtest)
-![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/ansemjo/speedtest)
-
-</a>
-
-The main distribution method is the automatically built container at
-[ansemjo/speedtest](https://hub.docker.com/r/ansemjo/speedtest).
-Obviously, you need to have a container runtime like `docker` or `podman`
-installed to run the container.
-
 To start the container with default settings run:
 
-    docker run -d -p 8000:8000 ansemjo/speedtest
+    docker run -d -p 8000:8000 tdeutsch/speedtest-plotter
 
 This will take a measurement every 15 minutes, save them to a SQLite database
 in `/data/speedtests.db` and run the webserver on port `8000`. Visit http://localhost:8000
@@ -39,20 +50,20 @@ URI might look like this:
     docker run -d \
       -p 8000:8000 \
       -e DATABASE=postgresql://user:password@hostname:5432/database' \
-      ansemjo/speedtest
+      tdeutsch/speedtest-plotter
 
 You can modify the measurement schedule with the environment variables `MINUTES` and
 `SCHEDULE`. The former takes a measurement every `n` minutes and the latter may define
 an entirely custom cron schedule like "four times a day":
 
-    docker run -d -p 8000:8000 -e SCHEDULE="0 3,9,15,21 * * *" ansemjo/speedtest
+    docker run -d -p 8000:8000 -e SCHEDULE="0 3,9,15,21 * * *" tdeutsch/speedtest-plotter
 
 The webserver is a single-threaded Flask application, which may not be suitable
 for production usage. To disable the webserver completely set the `PORT` environment
 variable to an empty string. This will only take measurements and save them to the
 database.
 
-    docker run -d -e PORT= -v speedtests:/data ansemjo/speedtest
+    docker run -d -e PORT= -v speedtests:/data tdeutsch/speedtest-plotter
 
 To dump the results as CSV from a running container use the `dump` command:
 
