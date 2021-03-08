@@ -27,9 +27,7 @@ The results can optionally be displayed through a simple Flask webserver.
   ```amd64```, ```armv7```, ```armv6```, ```ppc64le``` and ```arm64```
 
 ## Image tags
-- ```latest``` always refers to the latest tagged release
-- There are tags for major, minor and dotreleases (eg. ```1.0.0```, ```1.0```, ```1``` )
-- ```edge``` gets automatically built on every push to master and also via a weekly cron job
+- ```latest``` gets automatically built on every push to master and also via a weekly cron job
 
 ## USAGE
 
